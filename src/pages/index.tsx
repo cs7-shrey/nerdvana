@@ -3,6 +3,7 @@ import Link from "next/link";
 import Logo from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 function Header() {
   return(
@@ -18,6 +19,7 @@ function Header() {
 }
 
 export default function Home() {
+  const router = useRouter();
   return (
     <div className="relative">
       <Header />
@@ -31,9 +33,12 @@ export default function Home() {
               Nerdvana is your go to platform for group study, making notes, video calls and organizing study material. Chat, call, study, chill.
             </p>
             <div className="my-16">
-              <Button className="text-5xl py-4 h-fit w-fit bg-primary text-foreground">
-                Get Started
-              </Button>
+                <Button 
+                  className="text-5xl px-4 py-4 h-fit w-fit tracking-wide bg-primary text-foreground"
+                  onClick={() => router.push("/signup")}
+                >
+                  Get Started
+                </Button>
             </div>
           </div>
           <div>
