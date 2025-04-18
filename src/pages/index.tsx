@@ -27,14 +27,14 @@ export default function Home() {
         <div className="px-16 py-8 flex justify-center">
           <div className="w-1/2 py-8">
             <h1 className="text-[4rem] leading-none font-bold">
-              GROUP STUDY THAT&apos;S NEVER MEANT TO END 
+              GROUP STUDY THAT&apos;S <span className="bg-primary px-1">NEVER</span> MEANT TO END 
             </h1>
             <p className="text-lg my-8 tracking-wider font-mono w-[70%]">
               Nerdvana is your go to platform for group study, making notes, video calls and organizing study material. Chat, call, study, chill.
             </p>
             <div className="my-16">
                 <Button 
-                  className="text-5xl px-4 py-4 h-fit w-fit tracking-wide bg-primary text-foreground"
+                  className="text-4xl px-4 py-4 h-fit w-fit tracking-wide bg-primary text-foreground"
                   onClick={() => router.push("/signup")}
                 >
                   Get Started
