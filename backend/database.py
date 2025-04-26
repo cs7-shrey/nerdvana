@@ -2,10 +2,8 @@ import os
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
-from dotenv import load_dotenv
 from typing import Generator
 
-load_dotenv()
 ORM_URL = os.environ['ORM_DATABASE_URL']
 
 engine = create_engine(ORM_URL)

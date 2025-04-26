@@ -1,8 +1,8 @@
 import os
 import yagmail
 
-sender_email_id = os.getenv('SENDER_EMAIL_ID')
-sender_email_app_password = os.getenv('SENDER_EMAIL_APP_PASSWORD')
+sender_email_id = os.environ['SENDER_EMAIL_ID']
+sender_email_app_password = os.environ['SENDER_EMAIL_APP_PASSWORD']
 
 
 def send_email_to_user(email: str, content: str) -> None:

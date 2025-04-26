@@ -9,11 +9,7 @@ from backend.services.email import send_email_to_user
 from backend.services.crud.user import create_user_if_not_exists
 from backend import models
 
-
-from dotenv import load_dotenv
 import os
-
-load_dotenv()
 
 router = APIRouter(prefix='/user', tags=['User'])
 
