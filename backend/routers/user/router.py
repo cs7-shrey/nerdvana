@@ -18,18 +18,18 @@ otp_secret_key = os.environ['OTP_SECRET_KEY']
 
 @router.post('/signup_via_otp')
 async def signup(user_info: UserSignUp, db: Session = Depends(get_db)):
-    try:
-        name = user_info.name
-        email_id = user_info.email_id
-        password = user_info.password
+    name = user_info.name
+    email_id = user_info.email_id
+    password = user_info.password
 
-        otp = generate_otp(email=email_id, global_secret=otp_secret_key)
+    otp = generate_otp(email=email_id, global_secret=otp_secret_key)
 
-        user = db.query(models.PlatformUser).where(models.PlatformUser.email_id == email_id).first()
+    user = db.query(models.PlatformUser).where(models.PlatformUser.email_id == email_id).first()
 
-        if user and user.is_verified:
-            raise HTTPException(status_code=400, detail='User already verified.')
+    if user and user.is_verified:
+        raise HTTPException(status_code=400, detail='User already verified.')
         
+    try:
         create_user_if_not_exists(db, name, email_id, password)
 
         send_email_to_user(
@@ -44,7 +44,7 @@ async def signup(user_info: UserSignUp, db: Session = Depends(get_db)):
 
 
 @router.post('/verify_otp')
-async def verify_otp_route(verification_info: VerifyOtpRequest, x, db: Session = Depends(get_db)):
+async def verify_otp_route(verification_info: VerifyOtpRequest, db: Session = Depends(get_db)):
     otp = verification_info.otp
     email_id = verification_info.email_id
 

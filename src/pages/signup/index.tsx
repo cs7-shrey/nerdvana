@@ -1,3 +1,5 @@
+import { useRouter } from "next/router";
+
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -29,6 +31,9 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 
+import { sendOtpForSignup, verifyOtpForSignup } from "@/api/endpoints/users";
+import { AxiosError, isAxiosError } from "axios";
+
 // Define the form schema with Zod
 const signupFormSchema = z
 	.object({
@@ -44,9 +49,19 @@ const signupFormSchema = z
 
 type SignupFormValues = z.infer<typeof signupFormSchema>;
 
+interface ErrorResponse {
+	detail: string
+}
+
 const SignUp = () => {
+	const router = useRouter();
+
 	const [otpSent, setOtpSent] = useState(false);
+	const [sendingOtp, setSendingOtp] = useState(false);
+	const [verifying, setVerifying] = useState(false);
 	const [otp, setOtp] = useState("");
+	const [cardDescription, setCardDescription] = useState(!otpSent ? "Create an account to get started" : "Please enter the OTP")
+	const [userData, setUserData] = useState<SignupFormValues>();
 
 	// Initialize React Hook Form
 	const form = useForm<SignupFormValues>({
@@ -60,17 +75,48 @@ const SignUp = () => {
 	});
 
 	// Sends OTP to the user's email
-	const onSendOTP = () => {
-		// make an API call with form.getValues() if needed
-		toast.success("OTP sent successfully");
-		setOtpSent(true);
+	// TODO : clean up this clutter
+	const onSubmit = async (data: SignupFormValues) => {
+		const { name, email, password} = data
+		try {
+			setSendingOtp(true);
+			await sendOtpForSignup(name, email, password)	
+			toast.success("OTP sent successfully");
+			
+			setOtpSent(true);
+			setCardDescription('Please enter the OTP')
+			setUserData(data)
+		} catch (error) {
+			if (isAxiosError(error)) {
+				const e = error as AxiosError
+				toast.error(`An error occured while sending OTP. ${(e.response?.data as ErrorResponse)?.detail}`)
+			}
+			else {
+				toast.error('An error occured while sending OTP.')
+			}
+			console.error(error)
+		}
+		finally {
+			setSendingOtp(false)
+		}
 	};
 
-	const onSubmit = (data: SignupFormValues) => {
-		if (!otpSent) {
-			onSendOTP();
-		} else {
-			console.log("Signup with OTP", data, otp);
+	const verifyOTP = async (otp: string) => {
+		try {
+			setVerifying(true);
+			const email= userData?.email;
+			const response = await verifyOtpForSignup(otp, email as string);
+			if (response.status === 200) {
+				toast.success('OTP verified successfully')
+				router.push('/home')
+			}
+		}
+		catch(error) {
+			toast.error('Could not verify OTP');
+			console.error(error)
+		}
+		finally {
+			setVerifying(false)
 		}
 	};
 
@@ -80,11 +126,11 @@ const SignUp = () => {
 			<Card className="min-w-[30%] flex flex-col justify-center">
 				<CardHeader className="w-full text-center">
 					<CardTitle className="text-xl">Sign Up</CardTitle>
-					<CardDescription>Create an account to get started</CardDescription>
+					<CardDescription>{cardDescription}</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<Form {...form}>
-						<form
+						{!otpSent && <form
 							onSubmit={form.handleSubmit(onSubmit)}
 							className="flex flex-col gap-4"
 						>
@@ -157,19 +203,30 @@ const SignUp = () => {
 							/>
 
 							{/* OTP */}
-							<AnimatePresence>
-								{otpSent && (
-									<motion.div
-										className="flex flex-col gap-1"
-										initial={{ opacity: 0, y: 20, height: 0 }}
-										animate={{ opacity: 1, y: 0, height: "auto" }}
-										exit={{ opacity: 0, y: -20, height: 0 }}
-										transition={{
-											duration: 0.3,
-											ease: "easeOut",
-										}}
-									>
-										<p className="text-sm">OTP</p>
+
+							<div className="">
+								<Button
+									type="submit"
+									className="w-full text-foreground font-bold"
+									disabled={sendingOtp}
+								>
+									{otpSent ? "Sign Up" : "Send OTP"}
+								</Button>
+							</div>
+						</form>}
+						<AnimatePresence>
+							{otpSent && (
+								<motion.div
+									className="flex flex-col gap-1"
+									initial={{ opacity: 0, y: 20, height: 0 }}
+									animate={{ opacity: 1, y: 0, height: "auto" }}
+									exit={{ opacity: 0, y: -20, height: 0 }}
+									transition={{
+										duration: 0.3,
+										ease: "easeOut",
+									}}
+								>
+									<div className="flex flex-col justify-center mx-auto">
 										<InputOTP maxLength={6} value={otp} onChange={setOtp}>
 											<InputOTPGroup>
 												<InputOTPSlot index={0} />
@@ -185,23 +242,27 @@ const SignUp = () => {
 										</InputOTP>
 										<Button
 											type="button"
-											onClick={() => onSendOTP()}
+											onClick={() => 
+												onSubmit(form.getValues())
+											}
+											disabled={sendingOtp || verifying}
 											className="pl-1 bg-transparent hover:bg-transparent text-green-300 mr-auto hover:cursor-pointer hover:underline"
 										>
 											Resend OTP
 										</Button>
-									</motion.div>
-								)}
-							</AnimatePresence>
-							<div className="">
-								<Button
-									type="submit"
-									className="w-full text-foreground font-bold"
-								>
-									{otpSent ? "Sign Up" : "Send OTP"}
-								</Button>
-							</div>
-						</form>
+										<Button 
+											className="text-foreground font-bold"
+											onClick={() => {
+												verifyOTP(otp)
+											}}
+											disabled={sendingOtp || verifying}
+										>
+											Verify
+										</Button>
+									</div>
+								</motion.div>
+							)}
+						</AnimatePresence>
 					</Form>
 				</CardContent>
 				<CardFooter className="flex justify-center">
