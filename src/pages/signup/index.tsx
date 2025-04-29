@@ -72,7 +72,6 @@ const SignUp = () => {
 	})
 
 	// Sends OTP to the user's email
-	// TODO : clean up this clutter
 	const onSubmit = async (data: SignupFormValues) => {
 		const { name, email, password} = data
 		await sendOtp({

@@ -1,6 +1,3 @@
-// focus: return a hook that can verifyOtp, sendOtp, and handle erros within these functions
-// also, keep a state to keep track of the completion/error of these function
-
 import { useState } from "react";
 import { verifyOtpForSignup } from "@/api/endpoints/users";
 import { sendOtpForSignup } from "@/api/endpoints/users";
