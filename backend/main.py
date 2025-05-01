@@ -2,10 +2,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from backend.routers.user.router import router as user_router
+from backend.config import check_config
 from typing import Dict
 import os
 
 load_dotenv()
+
+check_config()
 
 app = FastAPI()
 
