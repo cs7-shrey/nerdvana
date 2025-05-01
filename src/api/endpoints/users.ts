@@ -16,3 +16,10 @@ export async function verifyOtpForSignup(otp: string, emailId: string) {
         email_id: emailId,
     })
 }
+
+export async function userLogin(emailId: string, password: string) {
+    return apiClient.post(`${USER_PATH}/login`, {
+        email_id: emailId,
+        password
+    })
+}

@@ -1,13 +1,5 @@
 import { useRouter } from "next/router";
 
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-	CardFooter,
-} from "@/components/ui/card";
 import { toast, Toaster } from "sonner";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,6 +13,8 @@ import {
 import SignupForm from "@/components/auth/SignupForm";
 import OtpVerification from "@/components/auth/OtpVerification";
 import { useSignup } from "@/hooks/auth/useSignup";
+import AuthLayout from "@/components/layouts/AuthLayout";
+import Link from "next/link";
 
 // Define the form schema with Zod
 const signupFormSchema = z
@@ -93,12 +87,11 @@ const SignUp = () => {
 	return (
 		<div className="h-screen flex justify-center items-center">
 			<Toaster richColors position="top-center" />
-			<Card className="min-w-[30%] flex flex-col justify-center">
-				<CardHeader className="w-full text-center">
-					<CardTitle className="text-xl">Sign Up</CardTitle>
-					<CardDescription>{!otpSent ? "Create an account to get started" : "Please enter the OTP"}</CardDescription>
-				</CardHeader>
-				<CardContent>
+			<div className="min-w-[30%]">
+				<AuthLayout 
+					title="Sign Up" 
+					description={!otpSent ? "Create an account to get started" : "Please enter the OTP"}
+				>
 					<Form {...form}>
 						{!otpSent && <SignupForm form={form} onSubmit={onSubmit} isLoading={isSendingOtp} />}
 						<AnimatePresence>
@@ -122,20 +115,20 @@ const SignUp = () => {
 								</motion.div>
 							)}
 						</AnimatePresence>
+						<div className="flex mt-6 justify-center">
+							<p className="text-sm text-gray-500">
+								Already have an account?{" "}
+								<Link
+								 	href={"/login"}
+									className="text-blue-500 hover:text-blue-700 font-medium"
+								>
+									Sign in
+								</Link>
+							</p>
+						</div>
 					</Form>
-				</CardContent>
-				<CardFooter className="flex justify-center">
-					<p className="text-sm text-gray-500">
-						Already have an account?{" "}
-						<a
-							href="#"
-							className="text-blue-500 hover:text-blue-700 font-medium"
-						>
-							Sign in
-						</a>
-					</p>
-				</CardFooter>
-			</Card>
+				</AuthLayout>
+			</div>	
 		</div>
 	);
 };

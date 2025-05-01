@@ -30,11 +30,11 @@ const SignupForm: React.FC<SignupFormProps> = ({form, onSubmit, isLoading}) => {
                 name="name"
                 render={({ field }) => (
                     <FormItem className="flex flex-col gap-1">
-                    <FormLabel className="text-sm">Name</FormLabel>
-                    <FormControl>
-                    <Input {...field} placeholder="John Doe" />
-                    </FormControl>
-                    <FormMessage />
+                        <FormLabel className="text-sm">Name</FormLabel>
+                        <FormControl>
+                            <Input {...field} placeholder="John Doe" />
+                        </FormControl>
+                        <FormMessage />
                     </FormItem>
                 )}
             />
@@ -94,11 +94,11 @@ const SignupForm: React.FC<SignupFormProps> = ({form, onSubmit, isLoading}) => {
 
             <div className="">
                 <Button
-                type="submit"
-                className="w-full text-foreground font-bold"
-                disabled={isLoading}
-            >
-            {isLoading ? "Sending OTP..." : "Send OTP"}
+                    type="submit"
+                    className="w-full text-foreground font-bold"
+                    disabled={isLoading}
+                >
+                    {isLoading ? "Sending OTP..." : "Send OTP"}
                 </Button>
             </div>
         </form>
